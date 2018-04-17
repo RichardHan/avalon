@@ -1,6 +1,8 @@
 (function(){
-	//var socket = io.connect('http://avalon-test.herokuapp.com/');
-	var socket = io.connect('pi-avalon.azurewebsites.net:80');
+
+	var socket = io.connect('http://pi-avalon.azurewebsites.net/');
+	
+
 	var gb = null 
 	var roomNumber = null ;
 	var role = null ;
@@ -43,6 +45,7 @@
 	};
 
 	socket.on("save",function (data){
+	    document.getElementById("storage_id").value = data.id
 		localStorage.socketId = data.id ;
 	})
 
@@ -61,7 +64,11 @@
 	})
 
 	document.getElementById("recoverButton").addEventListener("click",function(){
-		if ( localStorage.socketId !== undefined ){
+	    recover_id = document.getElementById("recover_id").value
+	    if (recover_id !== ""){
+	        socket.emit("recover",{id:recover_id });
+	    }
+		else if ( localStorage.socketId !== undefined ){
 			socket.emit("recover",{id:localStorage.socketId });
 		} else {
 			alert("沒有紀錄！") ;
@@ -828,7 +835,7 @@
 		}
 
         // Add by Jim
-		if (data.console.indexOf("成功") > -1 || data.console.indexOf("失敗") > -1 || data.console.indexOf("隊員：") > -1 ){
+		if (data.console.indexOf("成功") > -1 || data.console.indexOf("失敗") > -1 || data.console.indexOf("隊員：") > -1 || data.console.indexOf("隊長是 ") > -1 ){
 		    var voteArea = document.getElementById("voteArea")
             var voteRow = document.createElement("tr") ;
             var voteField = document.createElement("td") ;
